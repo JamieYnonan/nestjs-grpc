@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package user;
+
+import "user.proto";
+
+message SignedUpResponse {
+    string token = 1;
+    int32 expiresIn = 2;
+}

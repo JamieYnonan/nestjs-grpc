@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package user;
+
+import "requests.proto";
+import "responses.proto";
+
+service UserService {
+    rpc SignUp (SignUpRequest) returns (SignedUpResponse) {}
+}

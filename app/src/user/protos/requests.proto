@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package user;
+
+message SignUpRequest {
+    string name = 1;
+    string last_name = 2;
+    string email = 3;
+    string password = 4;
+}
