@@ -11,6 +11,8 @@ CLI_VERSION = 1.0.0
 APP_IMAGE = auth_app
 APP_VERSION = 0.1.0
 
+NETWORK = auth
+
 
 build_cli_image: ## Build cli image: make build_cli_image
 	docker build --force-rm --rm \
@@ -22,7 +24,7 @@ npm_cli: ## Execute npm: make npm_cli EXTRA_FLAGS="-e NODE_ENV=production" COMMA
 	docker run --rm -it \
 		-v $$PWD/app:/app \
 		-w="/app" ${EXTRA_FLAGS} \
-		auth_cli:1.0.0 sh -c "npm --no-cache ${COMMAND}"
+		${CLI_IMAGE}:${CLI_VERSION} sh -c "npm ${COMMAND}"
 
 build_app_image: ## Build app image: make build_app_image
 	docker build --force-rm --rm \
@@ -30,13 +32,19 @@ build_app_image: ## Build app image: make build_app_image
 		--build-arg TIME_ZONE=${TIME_ZONE} \
 		-t ${APP_IMAGE}:${APP_VERSION} -f docker/app/Dockerfile .
 
-up: build_app_image ## Up application: make up
+up: create_network build_app_image ## Up application: make up
 	IMAGE=${APP_IMAGE}:${APP_VERSION} \
-	docker-compose -f docker/docker-compose.yml up -d --build
+	NETWORK=${NETWORK} \
+	docker-compose -f docker/docker-compose.yml up -d --build && \
+	docker image prune --filter label=stage=intermediate -f
 
 down:
 	IMAGE=${APP_IMAGE}:${APP_VERSION} \
+	NETWORK=${NETWORK} \
 	docker-compose -f docker/docker-compose.yml down
+
+create_network:
+	docker network create --driver bridge ${NETWORK} || true
 
 ## Help ##
 help:

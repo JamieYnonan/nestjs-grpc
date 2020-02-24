@@ -4,6 +4,7 @@ import { SignUpRequestInterface } from './interfaces/sign-up-request.interface';
 import { SignedUpResponseInterface } from "./interfaces/signed-up-response.interface";
 import {UserService} from "./user.service";
 
+const logger = new Logger('UserController');
 @Controller()
 export class UserController {
 
@@ -11,6 +12,8 @@ export class UserController {
 
   @GrpcMethod('UserService')
   signUp(data: SignUpRequestInterface): SignedUpResponseInterface {
+    logger.log("SignUpRequestInterface Controller");
+    logger.log(data);
     return this.userService.signUp(data);
   }
 }
